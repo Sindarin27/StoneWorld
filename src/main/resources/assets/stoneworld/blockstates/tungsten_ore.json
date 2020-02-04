@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": [
+      { "model": "stoneworld:block/tungsten_ore" }
+    ]
+  }
+}

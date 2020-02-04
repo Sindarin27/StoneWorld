@@ -15,13 +15,23 @@ import net.minecraftforge.registries.ObjectHolder;
 @ObjectHolder(StoneWorld.MOD_ID)
 public class ModBlocks {
     public static final Block sulfur_ore = null;
+    public static final Block tungsten_ore = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        //In here you pass in all block instances you want to register.
-        //Make sure you always set the registry name.
         event.getRegistry().registerAll(
-                new Block(Block.Properties.create(Material.ROCK).hardnessAndResistance(3.0F).harvestLevel(0).harvestTool(ToolType.PICKAXE)).setRegistryName(StoneWorld.MOD_ID, "sulfur_ore")
+                //Sulfur
+                new Block(Block.Properties.create(Material.ROCK)
+                        .hardnessAndResistance(3.0F)
+                        .harvestLevel(0)
+                        .harvestTool(ToolType.PICKAXE)
+                ).setRegistryName(StoneWorld.MOD_ID, "sulfur_ore"),
+                //Tungsten
+                new Block(Block.Properties.create(Material.ROCK)
+                        .hardnessAndResistance(4.0F)
+                        .harvestLevel(2)
+                        .harvestTool(ToolType.PICKAXE)
+                ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore")
         );
     }
 }

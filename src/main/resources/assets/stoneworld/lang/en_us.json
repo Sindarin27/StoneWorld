@@ -1,4 +1,8 @@
 {
+  "block.stoneworld.sulfur_ore": "Sulfur Ore",
   "item.stoneworld.sulfur_dust": "Sulfur Dust",
-  "block.stoneworld.sulfur_ore": "Sulfur Ore"
+  "block.stoneworld.tungsten_ore": "Tungsten Ore",
+  "item.stoneworld.tungsten_ingot": "Tungsten Ingot",
+  "item.stoneworld.tungsten_dust": "Tungsten Dust",
+  "itemGroup.stoneworld": "Stone World"
 }
