@@ -32,7 +32,8 @@ public class ModItems {
 
                 //Blocks for items
                 new BlockItem(ModBlocks.sulfur_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.sulfur_ore.getRegistryName()),
-                new BlockItem(ModBlocks.tungsten_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.tungsten_ore.getRegistryName())
+                new BlockItem(ModBlocks.tungsten_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.tungsten_ore.getRegistryName()),
+                new BlockItem(ModBlocks.mixing_barrel, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.mixing_barrel.getRegistryName())
         );
 
         tab.createIcon();

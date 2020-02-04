@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ModBlocks {
     public static final Block sulfur_ore = null;
     public static final Block tungsten_ore = null;
+    public static final BlockMixingBarrel mixing_barrel = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -31,7 +32,9 @@ public class ModBlocks {
                         .hardnessAndResistance(4.0F)
                         .harvestLevel(2)
                         .harvestTool(ToolType.PICKAXE)
-                ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore")
+                ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore"),
+                //Mixing Barrel
+                new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel")
         );
     }
 }
