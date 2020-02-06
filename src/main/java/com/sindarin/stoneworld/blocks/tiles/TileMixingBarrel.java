@@ -1,8 +1,12 @@
 package com.sindarin.stoneworld.blocks.tiles;
 
+import com.sindarin.stoneworld.recipes.MixingBarrelRecipe;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -13,20 +17,25 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 
 public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IFluidHandler {
     protected FluidTank[] tanks;
 
     public final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> this).cast();
+    RecipeWrapper recipeWrapper;
 
     public TileMixingBarrel()
     {
         super(ModTiles.mixing_barrel);
-
+        recipeWrapper = new RecipeWrapper(new ItemStackHandler()); //Get ourselves a useless always-empty recipe wrapper that's just needed for requesting recipes
         //Make our two tanks
         tanks = new FluidTank[] {new FluidTank(10000), new FluidTank(10000)};
     }
@@ -189,5 +198,27 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
             totalCapacity += tank.getCapacity(); //Add the capacity of each tank
         }
         return totalCapacity;
+    }
+
+    public boolean doRecipe() {
+        List<MixingBarrelRecipe> recipes = world.getRecipeManager().getRecipes(MixingBarrelRecipe.mixing_barrel, recipeWrapper, world); //Get a list of the possible recipes for a mixing barrel
+        for (MixingBarrelRecipe recipe : recipes) { //Find a matching recipe from the recipe list
+            if (recipe.matches(tanks[0].getFluid(), tanks[1].getFluid())) {
+                //Find out what fluid we get as a result
+                FluidStack result = recipe.getResult(tanks[0].getFluid(), tanks[1].getFluid());
+                //Empty both tanks
+                tanks[0].setFluid(FluidStack.EMPTY);
+                tanks[1].setFluid(FluidStack.EMPTY);
+                //Fill tanks with result
+                int restAmount = result.getAmount() - this.fill(result, FluidAction.EXECUTE); //Fill the first tank with the result
+                if (restAmount > 0) { //If there's more than 1 tank worth of result, fill the second tank with the rest
+                    result.setAmount(restAmount);
+                    this.fill(result, FluidAction.EXECUTE);
+                }
+                //Done!
+                return true;
+            }
+        }
+        return false; //No recipe done, return false
     }
 }

@@ -1,0 +1,8 @@
+{
+  "type": "stoneworld:mixing_barrel",
+  "fluid1": "minecraft:water",
+  "fluid1Amount": 2,
+  "fluid2": "minecraft:lava",
+  "fluid2Amount": 1,
+  "fluidResult": "minecraft:water"
+}
