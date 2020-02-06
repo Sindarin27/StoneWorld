@@ -1,12 +1,12 @@
 package com.sindarin.stoneworld.blocks.tiles;
 
-import net.minecraft.fluid.Fluid;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.extensions.IForgeTileEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class TileMixingBarrel extends TileEntity implements IFluidHandler {
+public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IFluidHandler {
     protected FluidTank[] tanks;
 
     public final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> this).cast();
@@ -75,6 +75,8 @@ public class TileMixingBarrel extends TileEntity implements IFluidHandler {
         }
         //If any tank has been found, fill it
         if (tankToFill != -1) {
+            markDirty();
+            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 0); //Notify that this block updated (though its state did not change)
             return tanks[tankToFill].fill(resource, action);
         }
         //No tank has been found, return that we did not do anything
@@ -97,6 +99,8 @@ public class TileMixingBarrel extends TileEntity implements IFluidHandler {
         }
         //If any tank has been found, drain it
         if (tankToDrain != -1) {
+            markDirty();
+            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 0); //Notify that this block updated (though its state did not change)
             return tanks[tankToDrain].drain(resource, action);
         }
         //No tank has been found, return that we did not do anything
@@ -119,6 +123,8 @@ public class TileMixingBarrel extends TileEntity implements IFluidHandler {
         }
         //If any tank has been found, drain it
         if (tankToDrain != -1) {
+            markDirty();
+            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 0); //Notify that this block updated (though its state did not change)
             return tanks[tankToDrain].drain(maxDrain, action);
         }
         //No tank has been found, return that we did not do anything
@@ -142,12 +148,46 @@ public class TileMixingBarrel extends TileEntity implements IFluidHandler {
         return compound;
     }
 
-    @Nullable @Override
+    @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return fluidHandler.cast();
         }
 
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        SUpdateTileEntityPacket packet = new SUpdateTileEntityPacket(this.pos, this.getType().hashCode(), this.write(new CompoundNBT()));
+        return packet;
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
+        CompoundNBT compound = packet.getNbtCompound();
+        this.read(compound);
+    }
+
+    @Override
+    public net.minecraft.nbt.CompoundNBT getUpdateTag() {
+        return this.write(new CompoundNBT());
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundNBT tag) {
+        this.read(tag);
+    }
+
+    @Override
+    public boolean hasFastRenderer() { return true; }
+
+    //Get the total capacity of the TE (aka the capacity of all tanks combined)
+    public int getTotalCapacity() {
+        int totalCapacity = 0;
+        for (FluidTank tank : tanks) {
+            totalCapacity += tank.getCapacity(); //Add the capacity of each tank
+        }
+        return totalCapacity;
     }
 }
