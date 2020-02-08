@@ -4,14 +4,20 @@ import com.sindarin.stoneworld.blocks.BlockMixingBarrel;
 import com.sindarin.stoneworld.recipes.MixingBarrelOutput;
 import com.sindarin.stoneworld.recipes.MixingBarrelRecipe;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleType;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.extensions.IForgeTileEntity;
 import net.minecraftforge.common.util.LazyOptional;
@@ -28,9 +34,11 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 
 public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IFluidHandler, IItemHandler {
+    protected final int particlesPerFluidCount = 4; //How many particles to spawn per fluid on mixing
     protected FluidTank[] tanks;
     protected ItemStackHandler itemReturnStack;
 
@@ -265,15 +273,33 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
                 MixingBarrelOutput result = recipe.getResult(tanks[0].getFluid(), tanks[1].getFluid());
                 FluidStack resultFluid = result.resultFluid;
                 ItemStack resultItem = result.resultItem;
-                //Empty both tanks
-                tanks[0].setFluid(FluidStack.EMPTY);
-                tanks[1].setFluid(FluidStack.EMPTY);
-                //Fill as long as fluid remains to be filled and there is still room for extra fluid
-                while (resultFluid.getAmount() > 0 && this.EmptyTankRemaining()) {
-                    resultFluid.setAmount(resultFluid.getAmount() - this.fill(resultFluid, FluidAction.EXECUTE));
+
+                //Change the block if this is the server
+                if (!world.isRemote) {
+                    //Empty both tanks
+                    tanks[0].setFluid(FluidStack.EMPTY);
+                    tanks[1].setFluid(FluidStack.EMPTY);
+                    //Fill as long as fluid remains to be filled and there is still room for extra fluid
+                    while (resultFluid.getAmount() > 0 && this.EmptyTankRemaining()) {
+                        resultFluid.setAmount(resultFluid.getAmount() - this.fill(resultFluid, FluidAction.EXECUTE));
+                    }
+                    //Set the itemReturnStack's item to the resulted item
+                    itemReturnStack.setStackInSlot(0, resultItem);
                 }
-                //Set the itemReturnStack's item to the resulted item
-                itemReturnStack.setStackInSlot(0, resultItem);
+                //If not a server, spam particles and play sound
+                else {
+                    Random random = new Random();
+                    for (int i = 0; i < particlesPerFluidCount; i++) {
+                        world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, tanks[0].getFluid().getFluid().getDefaultState().getBlockState()), pos.getX() + random.nextDouble(), pos.getY() + 1, pos.getZ() + random.nextDouble(), 0, random.nextDouble(), 0);
+                    }
+                    for (int i = 0; i < particlesPerFluidCount; i++) {
+                        world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, tanks[1].getFluid().getFluid().getDefaultState().getBlockState()), pos.getX() + random.nextDouble(), pos.getY() + 1, pos.getZ() + random.nextDouble(), 0, random.nextDouble(), 0);
+                    }
+                    for (int i = 0; i < particlesPerFluidCount; i++) {
+                        world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, resultFluid.getFluid().getDefaultState().getBlockState()), pos.getX() + random.nextDouble(), pos.getY() + 1, pos.getZ() + random.nextDouble(), 0, random.nextDouble(), 0);
+                    }
+                    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.AMBIENT_UNDERWATER_EXIT, SoundCategory.BLOCKS, 0.8F, 1, false);
+                }
                 //Done!
                 return true;
             }
