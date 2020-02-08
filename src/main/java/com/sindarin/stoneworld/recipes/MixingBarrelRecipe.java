@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
-import javax.annotation.Resource;
 
 public class MixingBarrelRecipe implements IRecipe<RecipeWrapper> {
     public static final IRecipeType<MixingBarrelRecipe> mixing_barrel = IRecipeType.register("mixing_barrel");
@@ -19,28 +18,30 @@ public class MixingBarrelRecipe implements IRecipe<RecipeWrapper> {
     final String group;
     public FluidStack fluid1;
     public FluidStack fluid2;
-    public Fluid result;
+    public FluidStack result;
+    public ItemStack resultItem;
 
-    public MixingBarrelRecipe(ResourceLocation id, String group, FluidStack fluid1, FluidStack fluid2, Fluid result) {
+    public MixingBarrelRecipe(ResourceLocation id, String group, FluidStack fluid1, FluidStack fluid2, FluidStack result, ItemStack resultItem) {
         type = mixing_barrel;
         this.id = id;
         this.group = group;
         this.fluid1 = fluid1;
         this.fluid2 = fluid2;
         this.result = result;
+        this.resultItem = resultItem;
     }
 
     @Override
     public boolean matches(RecipeWrapper inv, World worldIn) { return true; } //Our recipe always matches if requested this way, used for finding a recipe
 
     @Override
-    public ItemStack getCraftingResult(RecipeWrapper inv) { return ItemStack.EMPTY; } //But it just gives an empty item
+    public ItemStack getCraftingResult(RecipeWrapper inv) { return resultItem; } //And it gives the result item
 
     @Override
     public boolean canFit(int width, int height) { return true; } //Mixing barrel recipes always fit in a grid even though no grid exists
 
     @Override
-    public ItemStack getRecipeOutput() { return ItemStack.EMPTY; } //And like I said, it just gives an empty item
+    public ItemStack getRecipeOutput() { return resultItem; } //And like I said, it gives the result item
 
     @Override
     public ResourceLocation getId() { return id; }
@@ -69,9 +70,16 @@ public class MixingBarrelRecipe implements IRecipe<RecipeWrapper> {
         return (fluid1Correct && fluid2Correct && ratioCorrect);
     }
 
-    public FluidStack getResult(FluidStack fluid1, FluidStack fluid2) {
+    public MixingBarrelOutput getResult(FluidStack fluid1Input, FluidStack fluid2Input) {
         //We could do a check on whether this recipe is correct, but let's just assume whoever is activating this method knows what they're doing
-        int amount = fluid1.getAmount() + fluid2.getAmount();
-        return new FluidStack(result, amount);
+        int amountInput = fluid1Input.getAmount() + fluid2Input.getAmount();
+        float resultMultiplier = (amountInput) / (fluid1.getAmount() + fluid2.getAmount());
+        int fluidAmountOutput = (int)Math.floor(result.getAmount() * resultMultiplier);
+        int itemAmountOutput = (int)Math.floor(resultItem.getCount() * resultMultiplier);
+
+        FluidStack fluidOutput = new FluidStack(result.getFluid(), fluidAmountOutput);
+        ItemStack itemOutput = new ItemStack(resultItem.getItem(), itemAmountOutput);
+
+        return new MixingBarrelOutput(itemOutput, fluidOutput);
     }
 }

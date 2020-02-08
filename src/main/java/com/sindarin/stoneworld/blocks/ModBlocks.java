@@ -2,11 +2,9 @@ package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.StoneWorld;
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
-import com.sindarin.stoneworld.client.tiles.MixingBarrelRenderer;
+import com.sindarin.stoneworld.client.render.MixingBarrelRenderer;
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

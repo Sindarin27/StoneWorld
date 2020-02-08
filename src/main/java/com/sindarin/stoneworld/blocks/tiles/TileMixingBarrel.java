@@ -1,12 +1,18 @@
 package com.sindarin.stoneworld.blocks.tiles;
 
+import com.sindarin.stoneworld.blocks.BlockMixingBarrel;
+import com.sindarin.stoneworld.recipes.MixingBarrelOutput;
 import com.sindarin.stoneworld.recipes.MixingBarrelRecipe;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -17,7 +23,8 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 
@@ -26,16 +33,19 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 
-public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IFluidHandler {
+public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IFluidHandler, IItemHandler {
     protected FluidTank[] tanks;
+    protected ItemStackHandler itemReturnStack;
 
     public final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> this).cast();
+    public final LazyOptional<IItemHandler> itemHandler = LazyOptional.of(() -> this).cast();
     RecipeWrapper recipeWrapper;
 
     public TileMixingBarrel()
     {
         super(ModTiles.mixing_barrel);
-        recipeWrapper = new RecipeWrapper(new ItemStackHandler()); //Get ourselves a useless always-empty recipe wrapper that's just needed for requesting recipes
+        itemReturnStack = new ItemStackHandler();
+        recipeWrapper = new RecipeWrapper(itemReturnStack);
         //Make our two tanks
         tanks = new FluidTank[] {new FluidTank(10000), new FluidTank(10000)};
     }
@@ -84,9 +94,13 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         }
         //If any tank has been found, fill it
         if (tankToFill != -1) {
+            int filled = tanks[tankToFill].fill(resource, action);
             markDirty();
-            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 0); //Notify that this block updated (though its state did not change)
-            return tanks[tankToFill].fill(resource, action);
+            BlockState oldBlockState = getBlockState();
+            BlockState newBlockState = getBlockState().with(BlockMixingBarrel.lightLevel, getLightValueFromTop(1));
+            world.notifyBlockUpdate(pos, oldBlockState, newBlockState, 3);
+            world.setBlockState(pos, newBlockState, 3); //Notify that this block updated with its new light value
+            return filled;
         }
         //No tank has been found, return that we did not do anything
         return 0;
@@ -108,9 +122,13 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         }
         //If any tank has been found, drain it
         if (tankToDrain != -1) {
+            FluidStack drained = tanks[tankToDrain].drain(resource, action);
             markDirty();
-            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 0); //Notify that this block updated (though its state did not change)
-            return tanks[tankToDrain].drain(resource, action);
+            BlockState oldBlockState = getBlockState();
+            BlockState newBlockState = getBlockState().with(BlockMixingBarrel.lightLevel, getLightValueFromTop(1));
+            world.setBlockState(pos, newBlockState, 3); //Notify that this block updated with its new light value
+            world.notifyBlockUpdate(pos, oldBlockState, newBlockState, 3);
+            return drained;
         }
         //No tank has been found, return that we did not do anything
         return FluidStack.EMPTY;
@@ -132,9 +150,13 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         }
         //If any tank has been found, drain it
         if (tankToDrain != -1) {
+            FluidStack drained = tanks[tankToDrain].drain(maxDrain, action);
             markDirty();
-            world.notifyBlockUpdate(pos, this.getBlockState(), this.getBlockState(), 0); //Notify that this block updated (though its state did not change)
-            return tanks[tankToDrain].drain(maxDrain, action);
+            BlockState oldBlockState = getBlockState();
+            BlockState newBlockState = getBlockState().with(BlockMixingBarrel.lightLevel, getLightValueFromTop(1));
+            world.setBlockState(pos, newBlockState, 3); //Notify that this block updated with its new light value
+            world.notifyBlockUpdate(pos, oldBlockState, newBlockState, 3);
+            return drained;
         }
         //No tank has been found, return that we did not do anything
         return FluidStack.EMPTY;
@@ -146,6 +168,7 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         for (int i = 0; i < tanks.length; i++) {
             tanks[i].readFromNBT(compound.getCompound("tank"+i));
         }
+        itemReturnStack.deserializeNBT(compound.getCompound("itemSlot"));
     }
 
     @Override
@@ -154,6 +177,7 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         for (int i = 0; i < tanks.length; i++) {
             compound.put("tank"+i, tanks[i].writeToNBT(new CompoundNBT()));
         }
+        compound.put("itemSlot", itemReturnStack.serializeNBT());
         return compound;
     }
 
@@ -162,7 +186,9 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return fluidHandler.cast();
         }
-
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return itemHandler.cast();
+        }
         return super.getCapability(capability, facing);
     }
 
@@ -189,7 +215,81 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
     }
 
     @Override
-    public boolean hasFastRenderer() { return true; }
+    public int getSlots() {
+        return itemReturnStack.getSlots();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        return itemReturnStack.getStackInSlot(slot);
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        return stack; //No item can be inserted, so return everything as remainder
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        markDirty();
+        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+        return itemReturnStack.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        return itemReturnStack.getSlotLimit(slot);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        return itemReturnStack.isItemValid(slot, stack);
+    }
+
+    public int getLightValueFromTop(int levelFromTop) {
+        if (levelFromTop > tanks.length) return 0; //The bottom of the barrel does not give off light
+        Fluid fluid = tanks[tanks.length - levelFromTop].getFluid().getFluid();
+        if (fluid == Fluids.EMPTY) return getLightValueFromTop(levelFromTop + 1); //If empty, move one layer down
+        int fluidLum = fluid.getAttributes().getLuminosity();
+        if (fluidLum == 0) return (int)Math.floor(0.6 * getLightValueFromTop(levelFromTop + 1)); //If this fluid doesn't give off light, then reduce the light for the next one that does give off light
+        return fluidLum;
+    }
+
+    public boolean doRecipe() {
+        if (!this.itemReturnStack.getStackInSlot(0).isEmpty()) return false; //If there's still a return item, no recipe can be done
+
+        List<MixingBarrelRecipe> recipes = world.getRecipeManager().getRecipes(MixingBarrelRecipe.mixing_barrel, recipeWrapper, world); //Get a list of the possible recipes for a mixing barrel
+        for (MixingBarrelRecipe recipe : recipes) { //Find a matching recipe from the recipe list
+            if (recipe.matches(tanks[0].getFluid(), tanks[1].getFluid())) {
+                //Find out what fluid we get as a result
+                MixingBarrelOutput result = recipe.getResult(tanks[0].getFluid(), tanks[1].getFluid());
+                FluidStack resultFluid = result.resultFluid;
+                ItemStack resultItem = result.resultItem;
+                //Empty both tanks
+                tanks[0].setFluid(FluidStack.EMPTY);
+                tanks[1].setFluid(FluidStack.EMPTY);
+                //Fill as long as fluid remains to be filled and there is still room for extra fluid
+                while (resultFluid.getAmount() > 0 && this.EmptyTankRemaining()) {
+                    resultFluid.setAmount(resultFluid.getAmount() - this.fill(resultFluid, FluidAction.EXECUTE));
+                }
+                //Set the itemReturnStack's item to the resulted item
+                itemReturnStack.setStackInSlot(0, resultItem);
+                //Done!
+                return true;
+            }
+        }
+        return false; //No recipe done, return false
+    }
+
+    boolean EmptyTankRemaining() {
+        for (FluidTank tank:tanks) {
+            if (tank.isEmpty()) { return true; } //If any tank is empty, then yes, there is an empty tank
+        }
+        return false; //None of the tanks returned true, so no tank is empty
+    }
 
     //Get the total capacity of the TE (aka the capacity of all tanks combined)
     public int getTotalCapacity() {
@@ -198,27 +298,5 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
             totalCapacity += tank.getCapacity(); //Add the capacity of each tank
         }
         return totalCapacity;
-    }
-
-    public boolean doRecipe() {
-        List<MixingBarrelRecipe> recipes = world.getRecipeManager().getRecipes(MixingBarrelRecipe.mixing_barrel, recipeWrapper, world); //Get a list of the possible recipes for a mixing barrel
-        for (MixingBarrelRecipe recipe : recipes) { //Find a matching recipe from the recipe list
-            if (recipe.matches(tanks[0].getFluid(), tanks[1].getFluid())) {
-                //Find out what fluid we get as a result
-                FluidStack result = recipe.getResult(tanks[0].getFluid(), tanks[1].getFluid());
-                //Empty both tanks
-                tanks[0].setFluid(FluidStack.EMPTY);
-                tanks[1].setFluid(FluidStack.EMPTY);
-                //Fill tanks with result
-                int restAmount = result.getAmount() - this.fill(result, FluidAction.EXECUTE); //Fill the first tank with the result
-                if (restAmount > 0) { //If there's more than 1 tank worth of result, fill the second tank with the rest
-                    result.setAmount(restAmount);
-                    this.fill(result, FluidAction.EXECUTE);
-                }
-                //Done!
-                return true;
-            }
-        }
-        return false; //No recipe done, return false
     }
 }
