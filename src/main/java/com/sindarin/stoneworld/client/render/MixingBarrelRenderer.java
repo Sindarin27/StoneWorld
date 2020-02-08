@@ -2,27 +2,19 @@ package com.sindarin.stoneworld.client.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Direction;
 import net.minecraft.world.LightType;
-import net.minecraftforge.client.model.animation.TileEntityRendererFast;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
-
-import java.util.Random;
 
 public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
     final Float PxSz = 1/16F; //Constant how big one pixel is

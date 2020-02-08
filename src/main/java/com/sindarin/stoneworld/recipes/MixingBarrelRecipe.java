@@ -1,6 +1,5 @@
 package com.sindarin.stoneworld.recipes;
 
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;

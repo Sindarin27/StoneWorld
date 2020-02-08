@@ -1,10 +1,8 @@
 package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
@@ -14,7 +12,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
@@ -23,7 +20,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeBlock;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class BlockMixingBarrel extends Block implements IForgeBlock {
     TileMixingBarrel tileEntity;

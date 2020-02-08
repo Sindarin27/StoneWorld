@@ -8,10 +8,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
-import javax.annotation.Nonnull;
-
-import static net.minecraftforge.fml.relauncher.libraries.LibraryManager.setup;
-
 @Mod.EventBusSubscriber(modid = StoneWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(StoneWorld.MOD_ID)
 public class ModTiles {

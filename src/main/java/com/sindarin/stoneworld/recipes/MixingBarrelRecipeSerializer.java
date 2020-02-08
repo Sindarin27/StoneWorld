@@ -1,26 +1,15 @@
 package com.sindarin.stoneworld.recipes;
 
 import com.google.gson.JsonObject;
-import net.minecraft.client.gui.recipebook.RecipeWidget;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.brewing.IBrewingRecipe;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import java.net.DatagramPacket;
-import java.util.Map;
 
 public class MixingBarrelRecipeSerializer<T extends MixingBarrelRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements net.minecraft.item.crafting.IRecipeSerializer<T> {
 
