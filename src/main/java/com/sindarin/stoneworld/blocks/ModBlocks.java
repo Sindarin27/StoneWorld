@@ -1,20 +1,14 @@
 package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.StoneWorld;
-import com.sindarin.stoneworld.blocks.tiles.ModTiles;
-import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
-import com.sindarin.stoneworld.client.render.MixingBarrelRenderer;
 import com.sindarin.stoneworld.fluids.ModFluids;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod.EventBusSubscriber(modid = StoneWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -43,6 +37,8 @@ public class ModBlocks {
                 //Mixing Barrel
                 new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel"),
                 //Fluid blocks
+                //TODO: make 'swimmable'
+                //TODO: make transparent
                 new FlowingFluidBlock(() -> ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
                         .doesNotBlockMovement()
                         .hardnessAndResistance(100F)
