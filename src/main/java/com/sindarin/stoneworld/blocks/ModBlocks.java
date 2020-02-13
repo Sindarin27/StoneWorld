@@ -1,10 +1,14 @@
 package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.StoneWorld;
+import com.sindarin.stoneworld.blocks.tiles.ModTiles;
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
 import com.sindarin.stoneworld.client.render.MixingBarrelRenderer;
+import com.sindarin.stoneworld.fluids.ModFluids;
 import net.minecraft.block.Block;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +23,7 @@ public class ModBlocks {
     public static final Block sulfur_ore = null;
     public static final Block tungsten_ore = null;
     public static final BlockMixingBarrel mixing_barrel = null;
+    public static final FlowingFluidBlock guano = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -36,12 +41,13 @@ public class ModBlocks {
                         .harvestTool(ToolType.PICKAXE)
                 ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore"),
                 //Mixing Barrel
-                new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel")
+                new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel"),
+                //Fluid blocks
+                new FlowingFluidBlock(() -> ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
+                        .doesNotBlockMovement()
+                        .hardnessAndResistance(100F)
+                        .noDrops()
+                ).setRegistryName(StoneWorld.MOD_ID, "guano")
         );
-    }
-
-    @SubscribeEvent
-    public static void registerTESR(FMLClientSetupEvent event) {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileMixingBarrel.class, new MixingBarrelRenderer());
     }
 }

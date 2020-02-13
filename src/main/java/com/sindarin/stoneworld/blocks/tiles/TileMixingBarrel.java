@@ -15,6 +15,7 @@ import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -48,7 +49,7 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
 
     public TileMixingBarrel()
     {
-        super(ModTiles.mixing_barrel);
+        super(ModTiles.MIXING_BARREL);
         itemReturnStack = new ItemStackHandler();
         recipeWrapper = new RecipeWrapper(itemReturnStack);
         //Make our two tanks
@@ -263,8 +264,8 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
         return fluidLum;
     }
 
-    public boolean doRecipe() {
-        if (!this.itemReturnStack.getStackInSlot(0).isEmpty()) return false; //If there's still a return item, no recipe can be done
+    public ActionResultType doRecipe() {
+        if (!this.itemReturnStack.getStackInSlot(0).isEmpty()) return ActionResultType.FAIL; //If there's still a return item, no recipe can be done
 
         List<MixingBarrelRecipe> recipes = world.getRecipeManager().getRecipes(MixingBarrelRecipe.mixing_barrel, recipeWrapper, world); //Get a list of the possible recipes for a mixing barrel
         for (MixingBarrelRecipe recipe : recipes) { //Find a matching recipe from the recipe list
@@ -298,13 +299,13 @@ public class TileMixingBarrel extends TileEntity implements IForgeTileEntity, IF
                     for (int i = 0; i < particlesPerFluidCount; i++) {
                         world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, resultFluid.getFluid().getDefaultState().getBlockState()), pos.getX() + random.nextDouble(), pos.getY() + 1, pos.getZ() + random.nextDouble(), 0, random.nextDouble(), 0);
                     }
-                    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.AMBIENT_UNDERWATER_EXIT, SoundCategory.BLOCKS, 0.8F, 1, false);
+                    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.AMBIENT_UNDERWATER_EXIT, SoundCategory.BLOCKS, 0.5F, 1, false);
                 }
                 //Done!
-                return true;
+                return ActionResultType.SUCCESS;
             }
         }
-        return false; //No recipe done, return false
+        return ActionResultType.FAIL; //Failed doing any recipe
     }
 
     boolean EmptyTankRemaining() {
