@@ -34,8 +34,9 @@ public class ModBlocks {
                         .harvestLevel(2)
                         .harvestTool(ToolType.PICKAXE)
                 ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore"),
-                //Mixing Barrel
+                //Other odd blocks
                 new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel"),
+                new BlockDrippingStalactite(() -> ModFluids.FLOWING_GUANO).setRegistryName(StoneWorld.MOD_ID, "guano_stalactite"),
                 //Fluid blocks
                 //TODO: make 'swimmable'
                 //TODO: make transparent
