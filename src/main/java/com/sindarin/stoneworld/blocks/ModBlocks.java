@@ -14,10 +14,11 @@ import net.minecraftforge.registries.ObjectHolder;
 @Mod.EventBusSubscriber(modid = StoneWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @ObjectHolder(StoneWorld.MOD_ID)
 public class ModBlocks {
-    public static final Block sulfur_ore = null;
-    public static final Block tungsten_ore = null;
+    public static final Block sulfur_ore = null,
+    tungsten_ore = null;
     public static final BlockMixingBarrel mixing_barrel = null;
     public static final FlowingFluidBlock guano = null;
+    public static final BlockDrippingStalactite guano_stalactite = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {

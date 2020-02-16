@@ -87,10 +87,6 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
         return Blocks.CAULDRON.getShape(state, worldIn, pos, context);
     }
 
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return Blocks.CAULDRON.getShape(state, worldIn, pos, context);
-    }
-
     @Override
     public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return Blocks.CAULDRON.getRaytraceShape(state, worldIn, pos);

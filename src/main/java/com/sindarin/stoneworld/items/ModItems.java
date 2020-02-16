@@ -38,6 +38,7 @@ public class ModItems {
                 new BlockItem(ModBlocks.sulfur_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.sulfur_ore.getRegistryName()),
                 new BlockItem(ModBlocks.tungsten_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.tungsten_ore.getRegistryName()),
                 new BlockItem(ModBlocks.mixing_barrel, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.mixing_barrel.getRegistryName()),
+                new BlockItem(ModBlocks.guano_stalactite, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.guano_stalactite.getRegistryName()),
 
                 //Buckets for fluids
                 new BucketItem(() -> ModFluids.GUANO, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)).setRegistryName(StoneWorld.MOD_ID, "guano_bucket")

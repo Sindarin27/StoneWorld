@@ -4,5 +4,8 @@
   "block.stoneworld.tungsten_ore": "Tungsten Ore",
   "item.stoneworld.tungsten_ingot": "Tungsten Ingot",
   "item.stoneworld.tungsten_dust": "Tungsten Dust",
+  "item.stoneworld.guano_bucket": "Bucket of Guano",
+  "block.stoneworld.guano_stalactite": "Guano-Dripping Stalactite",
+  "block.stoneworld.mixing_barrel": "Mixing Barrel",
   "itemGroup.stoneworld": "Stone World"
 }

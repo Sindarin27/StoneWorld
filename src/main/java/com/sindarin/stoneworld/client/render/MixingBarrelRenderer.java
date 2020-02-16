@@ -21,10 +21,10 @@ import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 
 public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
-    final Float PxSz = 1/16F; //Constant how big one pixel is
-    final Float sideInset = 2 * PxSz; //How far the fluid is inset on the sides (or outset if negative)
-    final Float bottomInset = 4 * PxSz; //Where the bottom of the mixing barrel is
-    final Float topInset = 1 * PxSz; //Where the top of the mixing barrel is
+    static final Float PxSz = 1/16F; //Constant how big one pixel is
+    static final Float sideInset = 2 * PxSz; //How far the fluid is inset on the sides (or outset if negative)
+    static final Float bottomInset = 4 * PxSz; //Where the bottom of the mixing barrel is
+    static final Float topInset = 1 * PxSz; //Where the top of the mixing barrel is
 
     public MixingBarrelRenderer(TileEntityRendererDispatcher dispatcher) {
         super(dispatcher);
