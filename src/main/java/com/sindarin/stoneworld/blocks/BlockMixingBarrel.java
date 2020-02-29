@@ -1,11 +1,13 @@
 package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
+import com.sindarin.stoneworld.entities.spi.IPetrifiedCreature;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.state.IntegerProperty;
@@ -34,7 +36,6 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
         super(Block.Properties.create(Material.WOOD)
                 .hardnessAndResistance(1.5F)
                 .harvestTool(ToolType.AXE)
-                .lightValue(15)
         );
 
         this.setDefaultState(this.stateContainer.getBaseState().with(lightLevel, Integer.valueOf(0))); //Default state has no light
@@ -90,5 +91,15 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
     @Override
     public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return Blocks.CAULDRON.getRaytraceShape(state, worldIn, pos);
+    }
+
+
+    @Override
+    public void onEntityWalk(World p_176199_1_, BlockPos p_176199_2_, Entity p_176199_3_) {
+        if (p_176199_3_ instanceof IPetrifiedCreature) {
+            IPetrifiedCreature petrified = (IPetrifiedCreature)p_176199_3_;
+            petrified.getPetrificationHandler().getRevived(petrified);
+        }
+        super.onEntityWalk(p_176199_1_, p_176199_2_, p_176199_3_);
     }
 }

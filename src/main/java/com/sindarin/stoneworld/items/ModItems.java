@@ -21,7 +21,7 @@ public class ModItems {
     public static final Item tungsten_dust = null;
 
     //Buckets
-    public static final Item guano_bucket = null;
+    public static final Item guano_bucket = null, solution_bucket = null;
     public static List<Item> items;
 
     @SubscribeEvent
@@ -41,7 +41,8 @@ public class ModItems {
                 new BlockItem(ModBlocks.guano_stalactite, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.guano_stalactite.getRegistryName()),
 
                 //Buckets for fluids
-                new BucketItem(() -> ModFluids.GUANO, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)).setRegistryName(StoneWorld.MOD_ID, "guano_bucket")
+                new BucketItem(() -> ModFluids.GUANO, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)).setRegistryName(StoneWorld.MOD_ID, "guano_bucket"),
+                new BucketItem(() -> ModFluids.SOLUTION, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)).setRegistryName(StoneWorld.MOD_ID, "solution_bucket")
         );
 
         tab.createIcon();

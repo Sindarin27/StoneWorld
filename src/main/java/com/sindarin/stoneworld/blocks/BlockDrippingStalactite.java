@@ -1,9 +1,13 @@
 package com.sindarin.stoneworld.blocks;
 
+import com.sindarin.stoneworld.entities.ModEntities;
+import com.sindarin.stoneworld.entities.spi.IPetrificationHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
@@ -15,6 +19,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
@@ -80,6 +85,18 @@ public class BlockDrippingStalactite extends Block {
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return shape;
+    }
+
+    @Override
+    public void onEntityCollision(BlockState p_196262_1_, World world, BlockPos p_196262_3_, Entity entity) {
+        if (entity instanceof LivingEntity) {
+            if (ModEntities.petrifiedByLiving.containsKey(entity.getClass())) {
+                LivingEntity livingEntity = (LivingEntity)entity;
+                IPetrificationHandler petrificationHandler = (IPetrificationHandler)ModEntities.petrifiedByLiving.get(entity.getClass());
+                petrificationHandler.getPetrified(livingEntity);
+            }
+        }
+        super.onEntityCollision(p_196262_1_, world, p_196262_3_, entity);
     }
 
     VoxelShape shape = VoxelShapes.or(

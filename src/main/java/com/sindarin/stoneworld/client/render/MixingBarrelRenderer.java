@@ -43,7 +43,7 @@ public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
         }
         //Draw the fluids
         matrixStack.push();
-        RenderType renderType = RenderType.translucent(); //How convenient, tranlucent already binds the block atlas
+        RenderType renderType = RenderType.getTranslucent(); //How convenient, tranlucent already binds the block atlas
         IVertexBuilder builder = iRenderTypeBuffer.getBuffer(renderType);
         //Draw all tanks from bottom up
         int fluidLayer = 0; //The current layer in mb that next fluid will start from
@@ -78,7 +78,7 @@ public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
     }
 
     void drawFluidLayer(IVertexBuilder builder, MatrixStack matrixStack, TextureAtlasSprite tex, Float height, int skylight, int light, float r, float g, float b, float opacity, int overlay) {
-        Matrix4f posMatrix = matrixStack.getLast().getPositionMatrix();
+        Matrix4f posMatrix = matrixStack.getLast().getMatrix();
         builder //Bottom right corner
                 .pos(posMatrix, sideInset, height,1 - sideInset)
                 .color(r,g,b,opacity)

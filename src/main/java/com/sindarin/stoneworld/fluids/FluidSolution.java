@@ -5,29 +5,20 @@ import com.sindarin.stoneworld.blocks.ModBlocks;
 import com.sindarin.stoneworld.items.ModItems;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.Item;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 
-import java.util.Set;
+public abstract class FluidSolution extends ForgeFlowingFluid {
 
-public abstract class FluidGuano extends ForgeFlowingFluid {
-
-    protected FluidGuano() {
+    protected FluidSolution() {
         super(new Properties(
-                () -> ModFluids.GUANO,
-                () -> ModFluids.FLOWING_GUANO,
+                () -> ModFluids.SOLUTION,
+                () -> ModFluids.FLOWING_SOLUTION,
                 FluidAttributes.builder(
                         new ResourceLocation(StoneWorld.MOD_ID, "block/guano_still"),
                         new ResourceLocation(StoneWorld.MOD_ID, "block/guano_flowing")
@@ -35,10 +26,10 @@ public abstract class FluidGuano extends ForgeFlowingFluid {
                         .overlay(new ResourceLocation(StoneWorld.MOD_ID, "block/guano_overlay"))
                         .viscosity(1500)
                         .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
-                        .color(0xAA918C5B)
+                        .color(0xA19C6B)
         )
-                .block(() -> ModBlocks.guano)
-                .bucket(() -> ModItems.guano_bucket)
+                .block(() -> ModBlocks.solution)
+                .bucket(() -> ModItems.solution_bucket)
                 .levelDecreasePerBlock(2)
         );
     }
@@ -49,7 +40,7 @@ public abstract class FluidGuano extends ForgeFlowingFluid {
         return super.isIn(fluidTag);
     }
 
-    public static class Source extends FluidGuano {
+    public static class Source extends FluidSolution {
         public Source() {
         }
 
@@ -64,7 +55,7 @@ public abstract class FluidGuano extends ForgeFlowingFluid {
         }
     }
 
-    public static class Flowing extends FluidGuano {
+    public static class Flowing extends FluidSolution {
         public Flowing() {
         }
 

@@ -17,7 +17,7 @@ public class ModBlocks {
     public static final Block sulfur_ore = null,
     tungsten_ore = null;
     public static final BlockMixingBarrel mixing_barrel = null;
-    public static final FlowingFluidBlock guano = null;
+    public static final FlowingFluidBlock guano = null, solution = null;
     public static final BlockDrippingStalactite guano_stalactite = null;
 
     @SubscribeEvent
@@ -39,13 +39,17 @@ public class ModBlocks {
                 new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel"),
                 new BlockDrippingStalactite(() -> ModFluids.FLOWING_GUANO).setRegistryName(StoneWorld.MOD_ID, "guano_stalactite"),
                 //Fluid blocks
-                //TODO: make 'swimmable'
                 //TODO: make transparent
                 new FlowingFluidBlock(() -> ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
                         .doesNotBlockMovement()
                         .hardnessAndResistance(100F)
                         .noDrops()
-                ).setRegistryName(StoneWorld.MOD_ID, "guano")
+                ).setRegistryName(StoneWorld.MOD_ID, "guano"),
+                new FlowingFluidBlock(() -> ModFluids.FLOWING_SOLUTION, Block.Properties.create(Material.WATER)
+                        .doesNotBlockMovement()
+                        .hardnessAndResistance(100F)
+                        .noDrops()
+                ).setRegistryName(StoneWorld.MOD_ID, "solution")
         );
     }
 }
