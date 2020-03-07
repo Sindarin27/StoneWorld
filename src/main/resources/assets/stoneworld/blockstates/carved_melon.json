@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "stoneworld:block/carved_melon" },
+        "facing=south": { "model": "stoneworld:block/carved_melon", "y": 180 },
+        "facing=west":  { "model": "stoneworld:block/carved_melon", "y": 270 },
+        "facing=east":  { "model": "stoneworld:block/carved_melon", "y": 90 }
+    }
+}

@@ -19,6 +19,8 @@ public class ModItems {
     public static final Item sulfur_dust = null;
     public static final Item tungsten_ingot = null;
     public static final Item tungsten_dust = null;
+    public static final Item medusa = null;
+    public static final BlockItem tungsten_ore = null;
 
     //Buckets
     public static final Item guano_bucket = null, solution_bucket = null;
@@ -34,11 +36,15 @@ public class ModItems {
                 new Item(new Item.Properties().group(tab)).setRegistryName(StoneWorld.MOD_ID, "tungsten_ingot"),
                 new Item(new Item.Properties().group(tab)).setRegistryName(StoneWorld.MOD_ID, "tungsten_dust"),
 
+                //Petrification device
+                new PetrificationItem(new Item.Properties().group(tab).maxStackSize(1)).setRegistryName(StoneWorld.MOD_ID, "medusa"),
+
                 //Blocks for items
                 new BlockItem(ModBlocks.sulfur_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.sulfur_ore.getRegistryName()),
                 new BlockItem(ModBlocks.tungsten_ore, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.tungsten_ore.getRegistryName()),
                 new BlockItem(ModBlocks.mixing_barrel, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.mixing_barrel.getRegistryName()),
                 new BlockItem(ModBlocks.guano_stalactite, new BlockItem.Properties().group(tab)).setRegistryName(ModBlocks.guano_stalactite.getRegistryName()),
+                new CarvedMelonItem(new ArmorItem.Properties().group(tab)).setRegistryName(ModBlocks.carved_melon.getRegistryName()),
 
                 //Buckets for fluids
                 new BucketItem(() -> ModFluids.GUANO, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)).setRegistryName(StoneWorld.MOD_ID, "guano_bucket"),

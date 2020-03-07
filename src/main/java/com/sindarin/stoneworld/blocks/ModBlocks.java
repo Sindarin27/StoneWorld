@@ -3,6 +3,7 @@ package com.sindarin.stoneworld.blocks;
 import com.sindarin.stoneworld.StoneWorld;
 import com.sindarin.stoneworld.fluids.ModFluids;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
 import net.minecraftforge.common.ToolType;
@@ -16,6 +17,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ModBlocks {
     public static final Block sulfur_ore = null,
     tungsten_ore = null;
+    public static final CarvedMelonBlock carved_melon = null;
     public static final BlockMixingBarrel mixing_barrel = null;
     public static final FlowingFluidBlock guano = null, solution = null;
     public static final BlockDrippingStalactite guano_stalactite = null;
@@ -35,6 +37,8 @@ public class ModBlocks {
                         .harvestLevel(2)
                         .harvestTool(ToolType.PICKAXE)
                 ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore"),
+                //Carved Melon
+                new CarvedMelonBlock(Block.Properties.from(Blocks.CARVED_PUMPKIN)).setRegistryName(StoneWorld.MOD_ID, "carved_melon"),
                 //Other odd blocks
                 new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel"),
                 new BlockDrippingStalactite(() -> ModFluids.FLOWING_GUANO).setRegistryName(StoneWorld.MOD_ID, "guano_stalactite"),
