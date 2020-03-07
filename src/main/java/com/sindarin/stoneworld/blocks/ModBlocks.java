@@ -2,58 +2,77 @@ package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.StoneWorld;
 import com.sindarin.stoneworld.fluids.ModFluids;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod.EventBusSubscriber(modid = StoneWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-@ObjectHolder(StoneWorld.MOD_ID)
 public class ModBlocks {
-    public static final Block sulfur_ore = null,
-    tungsten_ore = null;
-    public static final CarvedMelonBlock carved_melon = null;
-    public static final BlockMixingBarrel mixing_barrel = null;
-    public static final FlowingFluidBlock guano = null, solution = null;
-    public static final BlockDrippingStalactite guano_stalactite = null;
+    public static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, StoneWorld.MOD_ID);
+
+    public static final RegistryObject<Block>
+            //Ores
+            SULFUR_ORE = BLOCKS.register("sulfur_ore", () ->
+            new Block(Block.Properties.create(Material.ROCK)
+                    .hardnessAndResistance(3.0F)
+                    .harvestLevel(0)
+                    .harvestTool(ToolType.PICKAXE)
+            )),
+            TUNGSTEN_ORE = BLOCKS.register("tungsten_ore", () ->
+                    new Block(Block.Properties.create(Material.ROCK)
+                            .hardnessAndResistance(4.0F)
+                            .harvestLevel(2)
+                            .harvestTool(ToolType.PICKAXE)
+                    )),
+    //Misc blocks
+    CARVED_MELON = BLOCKS.register("carved_melon", () ->
+            new CarvedMelonBlock(Block.Properties.from(Blocks.CARVED_PUMPKIN))
+    ),
+            MIXING_BARREL = BLOCKS.register("mixing_barrel", () ->
+                    new BlockMixingBarrel(Block.Properties.create(Material.WOOD)
+                            .hardnessAndResistance(1.5F)
+                            .harvestTool(ToolType.AXE))
+            ),
+            GUANO_STALACTITE = BLOCKS.register("guano_stalactite", () ->
+                    new BlockDrippingStalactite(() -> ModFluids.FLOWING_GUANO)
+            ),
+    //Fluids
+    //TODO: Make transparent
+    GUANO = BLOCKS.register("guano", () ->
+            new FlowingFluidBlock(() -> ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
+                    .doesNotBlockMovement()
+                    .hardnessAndResistance(100F)
+                    .noDrops()
+            )
+    ),
+            SOLUTION = BLOCKS.register("solution", () ->
+                    new FlowingFluidBlock(() -> ModFluids.FLOWING_SOLUTION, Block.Properties.create(Material.WATER)
+                            .doesNotBlockMovement()
+                            .hardnessAndResistance(100F)
+                            .noDrops()
+                    )
+            ),
+            GRAPE_BUSH = BLOCKS.register("grape_bush", () ->
+                    new GrapeBushBlock(Block.Properties.create(Material.PLANTS)
+                            .tickRandomly()
+                            .doesNotBlockMovement()
+                            .sound(SoundType.SWEET_BERRY_BUSH)
+                    )
+            );
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().registerAll(
-                //Sulfur
-                new Block(Block.Properties.create(Material.ROCK)
-                        .hardnessAndResistance(3.0F)
-                        .harvestLevel(0)
-                        .harvestTool(ToolType.PICKAXE)
-                ).setRegistryName(StoneWorld.MOD_ID, "sulfur_ore"),
-                //Tungsten
-                new Block(Block.Properties.create(Material.ROCK)
-                        .hardnessAndResistance(4.0F)
-                        .harvestLevel(2)
-                        .harvestTool(ToolType.PICKAXE)
-                ).setRegistryName(StoneWorld.MOD_ID, "tungsten_ore"),
-                //Carved Melon
-                new CarvedMelonBlock(Block.Properties.from(Blocks.CARVED_PUMPKIN)).setRegistryName(StoneWorld.MOD_ID, "carved_melon"),
-                //Other odd blocks
-                new BlockMixingBarrel().setRegistryName(StoneWorld.MOD_ID, "mixing_barrel"),
-                new BlockDrippingStalactite(() -> ModFluids.FLOWING_GUANO).setRegistryName(StoneWorld.MOD_ID, "guano_stalactite"),
-                //Fluid blocks
-                //TODO: make transparent
-                new FlowingFluidBlock(() -> ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
-                        .doesNotBlockMovement()
-                        .hardnessAndResistance(100F)
-                        .noDrops()
-                ).setRegistryName(StoneWorld.MOD_ID, "guano"),
-                new FlowingFluidBlock(() -> ModFluids.FLOWING_SOLUTION, Block.Properties.create(Material.WATER)
-                        .doesNotBlockMovement()
-                        .hardnessAndResistance(100F)
-                        .noDrops()
-                ).setRegistryName(StoneWorld.MOD_ID, "solution")
-        );
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        RenderTypeLookup.setRenderLayer(GRAPE_BUSH.get(), RenderType.getCutoutMipped());
+        RenderTypeLookup.setRenderLayer(GUANO.get(), RenderType.getWaterMask());
+        RenderTypeLookup.setRenderLayer(SOLUTION.get(), RenderType.getWaterMask());
     }
 }

@@ -32,13 +32,10 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
     TileMixingBarrel tileEntity;
     public static final IntegerProperty lightLevel = BlockStateProperties.LEVEL_0_15; //The current light level of the block
 
-    public BlockMixingBarrel() {
-        super(Block.Properties.create(Material.WOOD)
-                .hardnessAndResistance(1.5F)
-                .harvestTool(ToolType.AXE)
-        );
+    public BlockMixingBarrel(Properties properties) {
+        super(properties);
 
-        this.setDefaultState(this.stateContainer.getBaseState().with(lightLevel, Integer.valueOf(0))); //Default state has no light
+        this.setDefaultState(this.stateContainer.getBaseState().with(lightLevel, 0)); //Default state has no light
     }
 
     @Override

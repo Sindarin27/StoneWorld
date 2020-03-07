@@ -1,17 +1,11 @@
 package com.sindarin.stoneworld.items;
 
-import com.sindarin.stoneworld.blocks.CarvedMelonBlock;
 import com.sindarin.stoneworld.blocks.ModBlocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraftforge.common.extensions.IForgeBlockState;
 
-import java.util.Properties;
 import java.util.function.Consumer;
 
 public class CarvedMelonItem extends ArmorItem {
@@ -20,7 +14,7 @@ public class CarvedMelonItem extends ArmorItem {
     public CarvedMelonItem(Properties properties) {
 
         super(new CarvedMelonMaterial(), EquipmentSlotType.HEAD, properties);
-        blockItem = new BlockItem(ModBlocks.carved_melon, new BlockItem.Properties());
+        blockItem = new BlockItem(ModBlocks.CARVED_MELON.get(), new BlockItem.Properties());
     }
 
     @Override

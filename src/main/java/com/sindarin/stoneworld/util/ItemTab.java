@@ -11,6 +11,6 @@ public class ItemTab extends ItemGroup {
 
     @Override
     public ItemStack createIcon() {
-        return new ItemStack(ModItems.sulfur_dust);
+        return new ItemStack(ModItems.SULFUR_DUST.get());
     }
 }

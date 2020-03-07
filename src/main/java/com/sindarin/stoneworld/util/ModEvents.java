@@ -43,7 +43,7 @@ public class ModEvents {
         String message = event.getMessage();
         ItemStack heldItemstack = event.getPlayer().getHeldItemMainhand();
 
-        if (heldItemstack.getItem() == ModItems.medusa) {
+        if (heldItemstack.getItem() == ModItems.MEDUSA.get()) {
             tryMedusa(message, heldItemstack);
         }
     }

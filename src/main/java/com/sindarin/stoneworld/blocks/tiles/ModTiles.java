@@ -22,7 +22,7 @@ public class ModTiles {
         // Register TileEntityTypes
         event.getRegistry().register(
                 //Create the TileEntityType for the mixing barrel
-                TileEntityType.Builder.create(TileMixingBarrel::new, ModBlocks.mixing_barrel).build(null).setRegistryName(StoneWorld.MOD_ID, "mixing_barrel")
+                TileEntityType.Builder.create(TileMixingBarrel::new, ModBlocks.MIXING_BARREL.get()).build(null).setRegistryName(StoneWorld.MOD_ID, "mixing_barrel")
         );
     }
 

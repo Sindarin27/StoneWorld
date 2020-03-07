@@ -5,7 +5,11 @@
   "item.stoneworld.tungsten_ingot": "Tungsten Ingot",
   "item.stoneworld.tungsten_dust": "Tungsten Dust",
   "item.stoneworld.guano_bucket": "Bucket of Guano",
+  "item.stoneworld.solution_bucket": "Bucket of Stone Formula",
   "item.stoneworld.medusa": "Petrification Device",
+  "block.stoneworld.carved_melon": "Carved Melon",
+  "item.stoneworld.carved_melon": "Carved Melon",
+  "item.stoneworld.grapes": "Grapes",
   "block.stoneworld.guano_stalactite": "Guano-Dripping Stalactite",
   "block.stoneworld.mixing_barrel": "Mixing Barrel",
   "itemGroup.stoneworld": "Stone World"

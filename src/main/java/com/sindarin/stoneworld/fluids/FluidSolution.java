@@ -3,6 +3,7 @@ package com.sindarin.stoneworld.fluids;
 import com.sindarin.stoneworld.StoneWorld;
 import com.sindarin.stoneworld.blocks.ModBlocks;
 import com.sindarin.stoneworld.items.ModItems;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.state.StateContainer;
@@ -28,8 +29,8 @@ public abstract class FluidSolution extends ForgeFlowingFluid {
                         .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
                         .color(0xA19C6B)
         )
-                .block(() -> ModBlocks.solution)
-                .bucket(() -> ModItems.solution_bucket)
+                .block(() -> (FlowingFluidBlock)ModBlocks.SOLUTION.get())
+                .bucket(ModItems.SOLUTION_BUCKET)
                 .levelDecreasePerBlock(2)
         );
     }

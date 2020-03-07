@@ -3,24 +3,16 @@ package com.sindarin.stoneworld.fluids;
 import com.sindarin.stoneworld.StoneWorld;
 import com.sindarin.stoneworld.blocks.ModBlocks;
 import com.sindarin.stoneworld.items.ModItems;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.Item;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.ILightReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.biome.BiomeColors;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
-
-import java.util.Set;
 
 public abstract class FluidGuano extends ForgeFlowingFluid {
 
@@ -37,8 +29,8 @@ public abstract class FluidGuano extends ForgeFlowingFluid {
                         .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
                         .color(0xAA918C5B)
         )
-                .block(() -> ModBlocks.guano)
-                .bucket(() -> ModItems.guano_bucket)
+                .block(() -> (FlowingFluidBlock)ModBlocks.GUANO.get())
+                .bucket(ModItems.GUANO_BUCKET)
                 .levelDecreasePerBlock(2)
         );
     }
