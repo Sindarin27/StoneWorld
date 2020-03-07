@@ -5,22 +5,9 @@
   "item.stoneworld.tungsten_ingot": "Tungsten Ingot",
   "item.stoneworld.tungsten_dust": "Tungsten Dust",
   "item.stoneworld.guano_bucket": "Bucket of Guano",
+  "item.stoneworld.medusa": "Petrification Device",
   "block.stoneworld.guano_stalactite": "Guano-Dripping Stalactite",
   "block.stoneworld.mixing_barrel": "Mixing Barrel",
-  "itemGroup.stoneworld": "Stone World",
-
-  "units.stoneworld.second": "second",
-  "units.stoneworld.seconds": "seconds",
-  "units.stoneworld.minute": "minute",
-  "units.stoneworld.minutes": "minutes",
-  "units.stoneworld.hour": "hour",
-  "units.stoneworld.hours": "hours",
-
-  "units.stoneworld.meter": "meter",
-  "units.stoneworld.meters": "meters",
-  "units.stoneworld.kilometer": "kilometer",
-  "units.stoneworld.kilometers": "kilometers",
-  "units.stoneworld.block": "block",
-  "units.stoneworld.blocks": "blocks"
+  "itemGroup.stoneworld": "Stone World"
 
 }

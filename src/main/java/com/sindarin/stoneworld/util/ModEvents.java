@@ -1,24 +1,14 @@
 package com.sindarin.stoneworld.util;
 
 import com.sindarin.stoneworld.StoneWorld;
-import com.sindarin.stoneworld.entities.DroppedMedusaEntity;
 import com.sindarin.stoneworld.items.ModItems;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTTypes;
-import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
-import sun.security.ssl.Debug;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,62 +18,40 @@ import java.util.Set;
 @Mod.EventBusSubscriber
 public class ModEvents {
     //Time units and their corresponding amount of seconds (in real time)
-    public static Map<String, Float> TimeUnits = new HashMap<String, Float>();
-    public static Map<String, Float> DistanceUnits = new HashMap<String, Float>();
+    private static Map<String, Float> TimeUnits = new HashMap<>();
+    private static Map<String, Float> DistanceUnits = new HashMap<>();
     //Initialise units
     static {
         //Time units: just the most standard ones
-        TimeUnits.put("units.stoneworld.second", 1f);
-        TimeUnits.put("units.stoneworld.seconds", 1f);
-        TimeUnits.put("units.stoneworld.minute", 60f);
-        TimeUnits.put("units.stoneworld.minutes", 60f);
-        TimeUnits.put("units.stoneworld.hour", 3600f);
-        TimeUnits.put("units.stoneworld.hours", 3600f);
+        TimeUnits.put("second", 1f);
+        TimeUnits.put("seconds", 1f);
+        TimeUnits.put("minute", 60f);
+        TimeUnits.put("minutes", 60f);
+        TimeUnits.put("hour", 3600f);
+        TimeUnits.put("hours", 3600f);
 
-        DistanceUnits.put("units.stoneworld.meter", 1f);
-        DistanceUnits.put("units.stoneworld.meters", 1f);
-        DistanceUnits.put("units.stoneworld.kilometer", 1000f);
-        DistanceUnits.put("units.stoneworld.kilometers", 1000f);
-        DistanceUnits.put("units.stoneworld.block", 1f);
-        DistanceUnits.put("units.stoneworld.blocks", 1f);
+        DistanceUnits.put("meter", 1f);
+        DistanceUnits.put("meters", 1f);
+        DistanceUnits.put("kilometer", 1000f);
+        DistanceUnits.put("kilometers", 1000f);
+        DistanceUnits.put("block", 1f);
+        DistanceUnits.put("blocks", 1f);
     }
 
     @SubscribeEvent
     public static void onChat(ServerChatEvent event) {
-        System.out.println("Checking chat");
         String message = event.getMessage();
         ItemStack heldItemstack = event.getPlayer().getHeldItemMainhand();
 
         if (heldItemstack.getItem() == ModItems.medusa) {
-            System.out.println("Attempting medusa activation");
             tryMedusa(message, heldItemstack);
         }
     }
 
-    /*@SubscribeEvent
-    public static void onEntityJoinsWorld(EntityJoinWorldEvent event) {
-        //If the entity is an item and not already one of our converted items, convert it
-        if (event.getEntity() instanceof ItemEntity && !(event.getEntity() instanceof DroppedMedusaEntity)) {
-            ItemEntity itemEntity = (ItemEntity)event.getEntity();
-            if (itemEntity.getItem().getItem() == ModItems.medusa) {
-                System.out.println("Replacing item with medusa");
-                ItemEntity newItemEntity = new DroppedMedusaEntity((EntityType<? extends ItemEntity>) itemEntity.getType(), event.getWorld());
-                newItemEntity.setItem(itemEntity.getItem());
-                newItemEntity.setOwnerId(itemEntity.getOwnerId());
-                newItemEntity.setThrowerId(itemEntity.getThrowerId());
-                newItemEntity.setMotion(itemEntity.getMotion());
-                newItemEntity.setPosition(itemEntity.getPosition().getX(), itemEntity.getPosition().getY(), itemEntity.getPosition().getZ());
-                newItemEntity.setDefaultPickupDelay();
-                event.getWorld().addEntity(newItemEntity);
-                itemEntity.remove();
-            }
-        }
-    }*/
-
     //Check whether a set of unlocalised strings contains a certain message
     private static boolean containsOneOfString(Set<String> strings, String messageToCheck) {
         for (String string:strings) {
-            if(messageToCheck.contains(I18n.format(string))) return true;
+            if(messageToCheck.contains(string)) return true;
         }
         return false;
     }
@@ -104,22 +72,20 @@ public class ModEvents {
         ) {
             //Go analyze the message
             String[] splitMessage = message.split(" ");
-            float distance = 0;
-            float time = 0;
+            float distance;
+            float time;
 
             //First part might not be a number, so try it and if not, cancel checking to manage
             try { distance = Integer.parseInt(splitMessage[0]); } catch (NumberFormatException NAN){ return; }
             //Multiply according to the distance unit supplied
-            String distanceUnit = findMatchingString(DistanceUnits.keySet(), splitMessage[1]);
-            if (distanceUnit == null) return;
-            distance = distance * DistanceUnits.get(distanceUnit);
+            distance = distance * DistanceUnits.getOrDefault(splitMessage[1], 0f);
+            if (distance <= 0) return;
 
             //Third part might not be a number, so try it and if not, cancel checking to manage
             try { time = Integer.parseInt(splitMessage[2]); } catch (NumberFormatException NAN){ return; }
             //Multiply according to the time unit supplied
-            String timeUnit = findMatchingString(TimeUnits.keySet(), splitMessage[3]);
-            if (timeUnit == null) return;
-            time = time * TimeUnits.get(timeUnit);
+            time = time * TimeUnits.getOrDefault(splitMessage[3], 0f);
+            if (time <= 0) return;
 
             //Make a nbt compound with the specified distance and distance
             CompoundNBT compound = itemStack.getOrCreateTag();
