@@ -3,10 +3,8 @@ package com.sindarin.stoneworld.blocks;
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
 import com.sindarin.stoneworld.entities.spi.IPetrifiedCreature;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
@@ -24,14 +22,16 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.extensions.IForgeBlock;
 import net.minecraftforge.fluids.FluidUtil;
+
+import java.util.Random;
 
 public class BlockMixingBarrel extends Block implements IForgeBlock {
     TileMixingBarrel tileEntity;
     public static final IntegerProperty lightLevel = BlockStateProperties.LEVEL_0_15; //The current light level of the block
-
+    public static final float PX = 1 / 16f;
     public BlockMixingBarrel(Properties properties) {
         super(properties);
 
@@ -42,6 +42,24 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
     public boolean hasTileEntity(BlockState state) { return true; } //Our mixing barrel has a tile entity
 
     @Override
+    @SuppressWarnings("deprecation")
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        try {
+            if (entity.getPosY() <= pos.getY() + (6.0F * PX)) {
+                ((TileMixingBarrel) world.getTileEntity(pos)).stomp();
+            }
+        } catch (NullPointerException npe) {
+            System.err.println("Block " + getBlock() + " at position " + pos + "does not have a valid tile entity");
+        }
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void tick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        ((TileMixingBarrel) world.getTileEntity(pos)).tick();
+    }
+
+    @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world)
     {
         this.tileEntity = new TileMixingBarrel();
@@ -50,6 +68,7 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
 
     @SuppressWarnings("deprecation")
     @Override
+    //TODO: Fix SUCCESS/CONSUME/FAIL/PASS without making it so you can e.g. put something in while holding a stick
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (player.getHeldItem(handIn).getItem() == Items.STICK) { return ((TileMixingBarrel)worldIn.getTileEntity(pos)).doRecipe(); }
         else if (player.getHeldItem(handIn).getItem() == Items.AIR)
@@ -59,6 +78,10 @@ public class BlockMixingBarrel extends Block implements IForgeBlock {
             return ActionResultType.SUCCESS;
         }
         else if (FluidUtil.interactWithFluidHandler(player, handIn, worldIn, pos, hit.getFace())) return ActionResultType.SUCCESS;
+        else {
+            //If all else fails, try inserting the player's item into the barrel
+            player.setHeldItem(handIn, ((TileMixingBarrel) worldIn.getTileEntity(pos)).insertItem(0, player.getHeldItem(handIn), false));
+        }
         return ActionResultType.SUCCESS;
     }
 

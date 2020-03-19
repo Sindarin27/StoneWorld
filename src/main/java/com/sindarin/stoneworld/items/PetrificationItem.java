@@ -2,20 +2,23 @@ package com.sindarin.stoneworld.items;
 
 import com.sindarin.stoneworld.entities.DroppedMedusaEntity;
 import com.sindarin.stoneworld.entities.ModEntities;
-import net.minecraft.client.Minecraft;
+import com.sindarin.stoneworld.entities.spi.IPetrificationHandler;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class PetrificationItem extends Item {
     //Duration of one tick, in seconds
     private final float TICK = 1/20f;
+    private final float EXPAND_SPEED = 10; //Expands 10 blocks per second
 
     public PetrificationItem(Properties properties) {
         super(properties);
@@ -23,14 +26,47 @@ public class PetrificationItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity holder, int slot, boolean selected) {
+        CompoundNBT tag = stack.getTag();
+        if (tag != null && tag.contains("time") && tag.contains("distance")) {
+            //Subtract time and check distance
+            float remainingTime = tag.getFloat("time") - TICK;
+            float remainingDistance = tag.getFloat("distance");
 
-        if(stack.getTag() != null && stack.getTag().contains("time")) {
-            float remainingTime = stack.getTag().getFloat("time");
-            remainingTime -= TICK;
-            if (remainingTime <= 0) {
-                System.out.println("Guess who just got PETRIFIED");
+            //If time over, expand
+            if (remainingTime <= 0 && remainingDistance > 0) {
+                if (!(holder instanceof ItemEntity)) {
+                    holder.entityDropItem(stack);
+                    holder.replaceItemInInventory(slot, ItemStack.EMPTY);
+                }
+                float expanded = tag.contains("expanded") ? tag.getFloat("expanded") : 0;
+                //Expand by EXPAND_SPEED, but not more than remaining distance
+                float newDistanceLeft = Math.max(remainingDistance - EXPAND_SPEED * TICK, 0);
+                expanded += remainingDistance - newDistanceLeft;
+                //Store new distance values
+                tag.putFloat("expanded", expanded);
+                tag.putFloat("distance", newDistanceLeft);
+                //Finished expanding? Wait two seconds before deactivating
+                if (newDistanceLeft <= 0) {
+                    remainingTime = 2;
+                }
+                List<Entity> targets = world.getEntitiesWithinAABBExcludingEntity(holder, new AxisAlignedBB(holder.getPosX() - expanded, holder.getPosY() - expanded, holder.getPosZ() - expanded, holder.getPosX() + expanded, holder.getPosY() + expanded, holder.getPosZ() + expanded));
+                for (Entity entity : targets) {
+                    if (ModEntities.petrifiedByLiving.containsKey(entity.getClass())) {
+                        LivingEntity livingEntity = (LivingEntity) entity;
+                        IPetrificationHandler petrificationHandler = (IPetrificationHandler) ModEntities.petrifiedByLiving.get(entity.getClass());
+                        petrificationHandler.getPetrified(livingEntity);
+                    }
+                }
             }
-            stack.getTag().putFloat("time", remainingTime);
+
+            tag.putFloat("time", remainingTime); //Set new time
+
+            //If time over and fully expanded, reset
+            if (remainingTime <= 0 && remainingDistance <= 0) {
+                tag.remove("time");
+                tag.remove("distance");
+                tag.remove("expanded");
+            }
         }
 
         super.inventoryTick(stack, world, holder, slot, selected);
@@ -57,11 +93,9 @@ public class PetrificationItem extends Item {
     @Nullable
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        System.out.println("Replacing item with medusa");
         ItemEntity newItemEntity = new DroppedMedusaEntity(ModEntities.dropped_medusa, world);
         newItemEntity.setItem(itemstack);
         if (location.getClass() == ItemEntity.class) {
-            System.out.println("Getting owner and thrower");
             newItemEntity.setOwnerId(((ItemEntity)location).getOwnerId());
             newItemEntity.setThrowerId(((ItemEntity)location).getThrowerId());
         }

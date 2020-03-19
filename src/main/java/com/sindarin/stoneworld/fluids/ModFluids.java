@@ -3,24 +3,18 @@ package com.sindarin.stoneworld.fluids;
 import com.sindarin.stoneworld.StoneWorld;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod.EventBusSubscriber(modid = StoneWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-@ObjectHolder(StoneWorld.MOD_ID)
 public class ModFluids {
-    public static final Fluid GUANO = null, SOLUTION = null;
-    public static final FlowingFluid FLOWING_GUANO = null, FLOWING_SOLUTION = null;
-
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Fluid> event) {
-        event.getRegistry().registerAll(
-                new FluidGuano.Source().setRegistryName(StoneWorld.MOD_ID, "guano"),
-                new FluidGuano.Flowing().setRegistryName(StoneWorld.MOD_ID, "flowing_guano"),
-                new FluidSolution.Source().setRegistryName(StoneWorld.MOD_ID, "solution"),
-                new FluidSolution.Flowing().setRegistryName(StoneWorld.MOD_ID, "flowing_solution")
-        );
-    }
+    public static final DeferredRegister<Fluid> FLUIDS = new DeferredRegister<>(ForgeRegistries.FLUIDS, StoneWorld.MOD_ID);
+    public static final RegistryObject<Fluid>
+            GUANO = FLUIDS.register("guano", FluidGuano.Source::new),
+            SOLUTION = FLUIDS.register("solution", FluidSolution.Source::new),
+            GRAPEJUICE = FLUIDS.register("grapejuice", FluidGrapeJuice.Source::new);
+    public static final RegistryObject<FlowingFluid>
+            FLOWING_GUANO = FLUIDS.register("flowing_guano", FluidGuano.Flowing::new),
+            FLOWING_SOLUTION = FLUIDS.register("flowing_solution", FluidSolution.Flowing::new),
+            FLOWING_GRAPEJUICE = FLUIDS.register("flowing_grapejuice", FluidGrapeJuice.Flowing::new);
 }

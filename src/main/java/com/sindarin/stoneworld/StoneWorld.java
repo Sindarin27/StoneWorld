@@ -1,6 +1,7 @@
 package com.sindarin.stoneworld;
 
 import com.sindarin.stoneworld.blocks.ModBlocks;
+import com.sindarin.stoneworld.fluids.ModFluids;
 import com.sindarin.stoneworld.items.ModItems;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -14,5 +15,6 @@ public class StoneWorld {
     public StoneWorld() {
         ModItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModBlocks.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModFluids.FLUIDS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }

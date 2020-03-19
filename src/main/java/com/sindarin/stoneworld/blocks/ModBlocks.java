@@ -2,7 +2,10 @@ package com.sindarin.stoneworld.blocks;
 
 import com.sindarin.stoneworld.StoneWorld;
 import com.sindarin.stoneworld.fluids.ModFluids;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -13,7 +16,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 
 @Mod.EventBusSubscriber(modid = StoneWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModBlocks {
@@ -43,19 +45,26 @@ public class ModBlocks {
                             .harvestTool(ToolType.AXE))
             ),
             GUANO_STALACTITE = BLOCKS.register("guano_stalactite", () ->
-                    new BlockDrippingStalactite(() -> ModFluids.FLOWING_GUANO)
+                    new BlockDrippingStalactite(ModFluids.FLOWING_GUANO)
             ),
     //Fluids
     //TODO: Make transparent
     GUANO = BLOCKS.register("guano", () ->
-            new FlowingFluidBlock(() -> ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
+            new FlowingFluidBlock(ModFluids.FLOWING_GUANO, Block.Properties.create(Material.WATER)
                     .doesNotBlockMovement()
                     .hardnessAndResistance(100F)
                     .noDrops()
             )
     ),
             SOLUTION = BLOCKS.register("solution", () ->
-                    new FlowingFluidBlock(() -> ModFluids.FLOWING_SOLUTION, Block.Properties.create(Material.WATER)
+                    new FlowingFluidBlock(ModFluids.FLOWING_SOLUTION, Block.Properties.create(Material.WATER)
+                            .doesNotBlockMovement()
+                            .hardnessAndResistance(100F)
+                            .noDrops()
+                    )
+            ),
+            GRAPEJUICE = BLOCKS.register("grapejuice", () ->
+                    new FlowingFluidBlock(ModFluids.FLOWING_GRAPEJUICE, Block.Properties.create(Material.WATER)
                             .doesNotBlockMovement()
                             .hardnessAndResistance(100F)
                             .noDrops()
@@ -72,7 +81,11 @@ public class ModBlocks {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         RenderTypeLookup.setRenderLayer(GRAPE_BUSH.get(), RenderType.getCutoutMipped());
-        RenderTypeLookup.setRenderLayer(GUANO.get(), RenderType.getWaterMask());
-        RenderTypeLookup.setRenderLayer(SOLUTION.get(), RenderType.getWaterMask());
+        RenderTypeLookup.setRenderLayer(ModFluids.GUANO.get().getFluid(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ModFluids.SOLUTION.get().getFluid(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ModFluids.GRAPEJUICE.get().getFluid(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ModFluids.FLOWING_SOLUTION.get().getFluid(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ModFluids.FLOWING_GUANO.get().getFluid(), RenderType.getTranslucent());
+        RenderTypeLookup.setRenderLayer(ModFluids.FLOWING_GRAPEJUICE.get().getFluid(), RenderType.getTranslucent());
     }
 }

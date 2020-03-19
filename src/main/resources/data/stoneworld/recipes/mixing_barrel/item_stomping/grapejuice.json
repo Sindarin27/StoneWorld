@@ -1,0 +1,22 @@
+{
+  "type": "stoneworld:barrel_item_stomping",
+  "fluidIn1": {
+    "fluid": "minecraft:empty"
+  },
+  "fluidIn2": {
+    "fluid": "minecraft:empty"
+  },
+  "fluidOut": {
+    "fluid": "stoneworld:grapejuice",
+    "amount": 200
+  },
+  "itemIn": {
+    "item": "stoneworld:grapes",
+    "count": 1
+  },
+  "itemOut": {
+    "item": "minecraft:air",
+    "count": 1
+  },
+  "stompsNeeded": 3
+}

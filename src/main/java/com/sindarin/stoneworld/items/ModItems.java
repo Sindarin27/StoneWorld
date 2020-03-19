@@ -32,8 +32,9 @@ public class ModItems {
             GUANO_STALACTITE = ITEMS.register("guano_stalactite", () -> new BlockItem(ModBlocks.GUANO_STALACTITE.get(), new BlockItem.Properties().group(tab))),
             CARVED_MELON = ITEMS.register("carved_melon", () -> new CarvedMelonItem(new ArmorItem.Properties().group(tab))),
     //Buckets
-            GUANO_BUCKET = ITEMS.register("guano_bucket", () -> new BucketItem(() -> ModFluids.GUANO, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab))),
-            SOLUTION_BUCKET = ITEMS.register("solution_bucket", () -> new BucketItem(() -> ModFluids.SOLUTION, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)));
+    GUANO_BUCKET = ITEMS.register("guano_bucket", () -> new BucketItem(ModFluids.GUANO::get, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab))),
+            SOLUTION_BUCKET = ITEMS.register("solution_bucket", () -> new BucketItem(ModFluids.SOLUTION::get, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab))),
+            GRAPEJUICE_BUCKET = ITEMS.register("grapejuice_bucket", () -> new BucketItem(ModFluids.GRAPEJUICE::get, (new Item.Properties()).containerItem(Items.BUCKET).maxStackSize(1).group(tab)));
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {

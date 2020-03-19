@@ -1,25 +1,19 @@
 package com.sindarin.stoneworld.entities;
 
 import com.sindarin.stoneworld.StoneWorld;
-import com.sindarin.stoneworld.client.render.MixingBarrelRenderer;
+import com.sindarin.stoneworld.client.render.entity.ItemMedusaRenderer;
 import com.sindarin.stoneworld.client.render.entity.StatueVillagerRenderer;
-import com.sindarin.stoneworld.entities.spi.IPetrificationHandler;
-import com.sindarin.stoneworld.entities.spi.IPetrifiedCreature;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
-import org.lwjgl.system.CallbackI;
 
 import java.util.HashMap;
 
@@ -43,6 +37,6 @@ public class ModEntities {
     @SubscribeEvent
     public static void registerClient(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(villager_statue, renderManager -> new StatueVillagerRenderer(renderManager, (IReloadableResourceManager) Minecraft.getInstance().getResourceManager()));
-        RenderingRegistry.registerEntityRenderingHandler(dropped_medusa, renderManager -> new ItemRenderer(renderManager, Minecraft.getInstance().getItemRenderer()));
+        RenderingRegistry.registerEntityRenderingHandler(dropped_medusa, renderManager -> new ItemMedusaRenderer(renderManager, Minecraft.getInstance().getItemRenderer()));
     }
 }

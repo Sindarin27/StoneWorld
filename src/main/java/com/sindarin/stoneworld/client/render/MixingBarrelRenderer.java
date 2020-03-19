@@ -1,24 +1,22 @@
 package com.sindarin.stoneworld.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.sindarin.stoneworld.blocks.tiles.TileMixingBarrel;
-import com.sindarin.stoneworld.recipes.MixingBarrelOutput;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.LightType;
 import net.minecraftforge.fluids.FluidStack;
-import org.lwjgl.opengl.GL11;
 
 public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
     static final Float PxSz = 1/16F; //Constant how big one pixel is
@@ -32,15 +30,8 @@ public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
 
     @Override
     public void render(TileMixingBarrel mixingBarrel, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer iRenderTypeBuffer, int i1, int i2) {
-        //Draw the item
         ItemStack stack = mixingBarrel.getStackInSlot(0);
-        if (!stack.isEmpty()) {
-            matrixStack.push();
-            matrixStack.translate(0.5, 0.5, 0.5);
-            ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-            itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, i1, i2, matrixStack, iRenderTypeBuffer);
-            matrixStack.pop();
-        }
+
         //Draw the fluids
         matrixStack.push();
         RenderType renderType = RenderType.getTranslucent(); //How convenient, tranlucent already binds the block atlas
@@ -60,6 +51,7 @@ public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
                 TextureAtlasSprite still = Minecraft.getInstance().getAtlasSpriteGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(fluid.getAttributes().getStillTexture(mixingBarrel.getWorld(), mixingBarrel.getPos()));
                 //Figure out the color & light
                 int color = fluid.getAttributes().getColor();
+                float a = ((color >> 24) & 0xFF) / 255f;
                 float r = ((color >> 16) & 0xFF) / 255f;
                 float g = ((color >> 8) & 0xFF) / 255f;
                 float b = ((color >> 0) & 0xFF) / 255f;
@@ -68,16 +60,24 @@ public class MixingBarrelRenderer extends TileEntityRenderer<TileMixingBarrel> {
                 int skylight = mixingBarrel.getWorld().getLightFor(LightType.SKY, mixingBarrel.getPos()) * 16; //Same as above, but then for the sky light
 
                 //Put fluid into buffer
-                drawFluidLayer(builder, matrixStack, still, layerHeight, skylight, light, r, g, b, 0.8F, i2);
+                drawFluidLayer(builder, matrixStack, still, layerHeight, skylight, light, r, g, b, a, i2);
             }
 
 
         }
-
         matrixStack.pop();
+
+        //Draw the item
+        if (!stack.isEmpty()) {
+            matrixStack.push();
+            matrixStack.translate(0.5, 0.5, 0.5);
+            ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+            itemRenderer.renderItem(stack, ItemCameraTransforms.TransformType.FIXED, i1, i2, matrixStack, iRenderTypeBuffer);
+            matrixStack.pop();
+        }
     }
 
-    void drawFluidLayer(IVertexBuilder builder, MatrixStack matrixStack, TextureAtlasSprite tex, Float height, int skylight, int light, float r, float g, float b, float opacity, int overlay) {
+    private void drawFluidLayer(IVertexBuilder builder, MatrixStack matrixStack, TextureAtlasSprite tex, Float height, int skylight, int light, float r, float g, float b, float opacity, int overlay) {
         Matrix4f posMatrix = matrixStack.getLast().getMatrix();
         builder //Bottom right corner
                 .pos(posMatrix, sideInset, height,1 - sideInset)

@@ -2,13 +2,15 @@ package com.sindarin.stoneworld.entities;
 
 import com.sindarin.stoneworld.entities.spi.IPetrificationHandler;
 import com.sindarin.stoneworld.entities.spi.IPetrifiedCreature;
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -20,12 +22,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
+import java.util.Random;
 
 public class EntityStatueVillager extends VillagerEntity implements IPetrifiedCreature<VillagerEntity> {
     EntityStatueVillager(EntityType<? extends VillagerEntity> type, World world) {
         super(type, world);
     }
 
+    private final static int particleCountForConversion = 20;
     @Override
     public IPetrificationHandler<VillagerEntity> getPetrificationHandler() {
         return new PetrificationHandler();
@@ -34,6 +38,10 @@ public class EntityStatueVillager extends VillagerEntity implements IPetrifiedCr
     public static class PetrificationHandler implements IPetrificationHandler<VillagerEntity> {
         @Override
         public IPetrifiedCreature<VillagerEntity> getPetrified(VillagerEntity entity) {
+            Random random = new Random();
+            for (int i = 0; i < particleCountForConversion; i++) {
+                entity.getWorld().addParticle(new BlockParticleData(ParticleTypes.BLOCK, Blocks.STONE.getDefaultState()), entity.getPosXRandom(1), entity.getPosYRandom(), entity.getPosZRandom(1), random.nextDouble() * 0.5, random.nextDouble() * 0.5, random.nextDouble() * 0.5);
+            }
             CompoundNBT compound = new CompoundNBT();
             entity.writeWithoutTypeId(compound); //Read the nbt from the old entity
             EntityStatueVillager petrified = ModEntities.villager_statue.create(entity.world); //Create a petrified entity in the same world

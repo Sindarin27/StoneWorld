@@ -6,6 +6,9 @@ import com.sindarin.stoneworld.items.ModItems;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.IParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
@@ -14,25 +17,33 @@ import net.minecraft.util.SoundEvents;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 
-public abstract class FluidGuano extends ForgeFlowingFluid {
+import javax.annotation.Nullable;
 
-    protected FluidGuano() {
+public abstract class FluidGrapeJuice extends ForgeFlowingFluid {
+
+    protected FluidGrapeJuice() {
         super(new Properties(
-                        ModFluids.GUANO::get,
-                        ModFluids.FLOWING_GUANO::get,
-                FluidAttributes.builder(
-                        new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_still"),
-                        new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_flowing")
+                        ModFluids.GRAPEJUICE::get,
+                        ModFluids.FLOWING_GRAPEJUICE::get,
+                        FluidAttributes.builder(
+                                new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_still"),
+                                new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_flowing")
+                        )
+                                .overlay(new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_overlay"))
+                                .viscosity(3000)
+                                .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
+                                .color(0x994700a4)
                 )
-                        .overlay(new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_overlay"))
-                        .viscosity(1500)
-                        .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
-                        .color(0xEE918C5B)
-        )
-                .block(() -> (FlowingFluidBlock)ModBlocks.GUANO.get())
-                .bucket(ModItems.GUANO_BUCKET)
-                .levelDecreasePerBlock(2)
+                        .block(() -> (FlowingFluidBlock) ModBlocks.GRAPEJUICE.get())
+                        .bucket(ModItems.GRAPEJUICE_BUCKET)
+                        .levelDecreasePerBlock(2)
         );
+    }
+
+    @Nullable
+    @Override
+    protected IParticleData getDripParticleData() {
+        return new BlockParticleData(ParticleTypes.BLOCK, getBlockState(getDefaultState()));
     }
 
     @Override
@@ -41,7 +52,7 @@ public abstract class FluidGuano extends ForgeFlowingFluid {
         return super.isIn(fluidTag);
     }
 
-    public static class Source extends FluidGuano {
+    public static class Source extends FluidGrapeJuice {
         public Source() {
         }
 
@@ -52,11 +63,11 @@ public abstract class FluidGuano extends ForgeFlowingFluid {
 
         @Override
         public int getLevel(IFluidState p_207192_1_) {
-            return 6;
+            return 8;
         }
     }
 
-    public static class Flowing extends FluidGuano {
+    public static class Flowing extends FluidGrapeJuice {
         public Flowing() {
         }
 

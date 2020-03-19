@@ -18,16 +18,16 @@ public abstract class FluidSolution extends ForgeFlowingFluid {
 
     protected FluidSolution() {
         super(new Properties(
-                () -> ModFluids.SOLUTION,
-                () -> ModFluids.FLOWING_SOLUTION,
+                        ModFluids.SOLUTION::get,
+                        ModFluids.FLOWING_SOLUTION::get,
                 FluidAttributes.builder(
-                        new ResourceLocation(StoneWorld.MOD_ID, "block/guano_still"),
-                        new ResourceLocation(StoneWorld.MOD_ID, "block/guano_flowing")
+                        new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_still"),
+                        new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_flowing")
                 )
-                        .overlay(new ResourceLocation(StoneWorld.MOD_ID, "block/guano_overlay"))
+                        .overlay(new ResourceLocation(StoneWorld.MOD_ID, "block/generalfluid_overlay"))
                         .viscosity(1500)
                         .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
-                        .color(0xA19C6B)
+                        .color(0xE5A19C6B)
         )
                 .block(() -> (FlowingFluidBlock)ModBlocks.SOLUTION.get())
                 .bucket(ModItems.SOLUTION_BUCKET)

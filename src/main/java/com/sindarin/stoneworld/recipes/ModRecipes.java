@@ -1,6 +1,8 @@
 package com.sindarin.stoneworld.recipes;
 
 import com.sindarin.stoneworld.StoneWorld;
+import com.sindarin.stoneworld.recipes.mixingbarrel.FluidMixingRecipe;
+import com.sindarin.stoneworld.recipes.mixingbarrel.ItemStompingRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,7 +17,8 @@ public class ModRecipes {
     @SubscribeEvent
     public static void onRegisterRecipeSerializers(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
         event.getRegistry().registerAll(
-                new MixingBarrelRecipeSerializer<>(MixingBarrelRecipe::new).setRegistryName(StoneWorld.MOD_ID, "mixing_barrel")
+                (IRecipeSerializer<?>) new FluidMixingRecipe.Serializer<>(FluidMixingRecipe::new).setRegistryName(StoneWorld.MOD_ID, "barrel_fluid_mixing"),
+                (IRecipeSerializer<?>) new ItemStompingRecipe.Serializer<>(ItemStompingRecipe::new).setRegistryName(StoneWorld.MOD_ID, "barrel_item_stomping")
         );
     }
 }
