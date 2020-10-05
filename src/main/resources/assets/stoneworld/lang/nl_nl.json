@@ -1,0 +1,16 @@
+{
+  "block.stoneworld.sulfur_ore": "Zwavelerts",
+  "item.stoneworld.sulfur_dust": "Zwavelstof",
+  "block.stoneworld.tungsten_ore": "Wolfraamerst",
+  "item.stoneworld.tungsten_ingot": "Wolfraamstaaf",
+  "item.stoneworld.tungsten_dust": "Wolfraamstof",
+  "item.stoneworld.guano_bucket": "Emmer met guano",
+  "item.stoneworld.solution_bucket": "Emmer met Steen Formule",
+  "item.stoneworld.medusa": "Verstening Machine",
+  "block.stoneworld.carved_melon": "Bewerkte Meloen",
+  "item.stoneworld.carved_melon": "Bewerkte Meloen",
+  "item.stoneworld.grapes": "Druiven",
+  "block.stoneworld.guano_stalactite": "Guano-Druipende Stalactiet",
+  "block.stoneworld.mixing_barrel": "Mengvat",
+  "itemGroup.stoneworld": "Stenen Wereld"
+}
